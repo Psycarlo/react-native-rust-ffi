@@ -471,7 +471,7 @@ function getTests(): TestDefinition[] {
         const m2 = createMetadata(['b', 'c'], ['3', '4']);
         const merged = mergeMetadata(m1, m2);
         const val = getMetadataValue(merged, 'b');
-        return `merged.b = ${val}, keys = ${Object.keys(merged).join(',')}`;
+        return `merged.b = ${val}, keys = ${[...merged.keys()].join(',')}`;
       },
     },
 
@@ -527,7 +527,7 @@ function getTests(): TestDefinition[] {
           '+351 912345678',
           { street: '123 Main St', city: 'Lisbon', state: undefined, zip: '1000', country: 'PT' },
           ['dev', 'rust'],
-          { role: 'engineer' }
+          new Map([['role', 'engineer']])
         ) as { name: string; address: { city: string } | undefined; tags: string[] };
         return `${c.name} @ ${c.address?.city}, tags=[${c.tags.join(',')}]`;
       },
@@ -543,7 +543,7 @@ function getTests(): TestDefinition[] {
           undefined,
           { street: 'Rua Augusta', city: 'Lisboa', state: undefined, zip: '1100', country: 'PT' },
           [],
-          {}
+          new Map()
         );
         const addr = getContactAddress(c) as { street: string; city: string } | undefined;
         return addr ? `${addr.street}, ${addr.city}` : 'undefined';
