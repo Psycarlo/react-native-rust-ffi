@@ -1,0 +1,230 @@
+namespace rust_ffi {
+    // ── Sync — fast ──
+    i64 add(i64 a, i64 b);
+    string concatenate(string a, string b);
+    string reverse_string(string input);
+
+    // ── Sync — slow (CPU-bound) ──
+    u64 fibonacci(u32 n);
+    boolean is_prime(u64 n);
+    u64 count_primes(u64 limit);
+
+    // ── Async — fast ──
+    [Async]
+    string async_greet(string name);
+
+    [Async]
+    i64 async_add(i64 a, i64 b);
+
+    // ── Async — slow ──
+    [Async]
+    string async_sleep_ms(u64 ms);
+
+    [Async]
+    FakeApiResponse async_fetch_fake_data(u64 delay_ms);
+
+    [Async]
+    u64 async_count_primes(u64 limit);
+
+    // ── Blocking ──
+    string blocking_hash_iterations(string input, u32 iterations);
+    string blocking_sleep_ms(u64 ms);
+
+    // ── Many params + optional fields ──
+    UserProfile create_user_profile(
+        string username,
+        string email,
+        string? display_name,
+        string? bio,
+        u32? age,
+        string? avatar_url,
+        string? website,
+        string? location,
+        boolean is_verified,
+        u64 follower_count
+    );
+    SearchResult search_users(SearchOptions options);
+
+    // ── Error handling ──
+    [Throws=RustFfiError]
+    f64 divide(f64 a, f64 b);
+
+    [Async, Throws=RustFfiError]
+    string async_fetch_with_timeout(u64 delay_ms, u64 timeout_ms);
+
+    // ── Callbacks ──
+    [Async]
+    string async_process_with_progress(u32 steps, u64 delay_per_step_ms, ProgressCallback callback);
+
+    string blocking_process_with_progress(u32 steps, u64 delay_per_step_ms, ProgressCallback callback);
+
+    // ── Async + throws + callback combo ──
+    [Async, Throws=RustFfiError]
+    string async_process_with_validation(u32 steps, u64 delay_per_step_ms, ProgressCallback callback);
+
+    // ── Benchmark helpers ──
+    TimedResult timed_fibonacci(u32 n);
+    TimedResult timed_count_primes(u64 limit);
+
+    // ── Bytes / binary data ──
+    sequence<u8> compute_sha256_simple(sequence<u8> data);
+    sequence<u8> generate_random_bytes(u32 size);
+    string bytes_to_hex(sequence<u8> data);
+    [Throws=RustFfiError]
+    sequence<u8> hex_to_bytes(string hex);
+
+    // ── Vec as input ──
+    i64 sum_numbers(sequence<i64> numbers);
+    sequence<i64> sort_numbers(sequence<i64> numbers);
+    sequence<string> filter_strings_by_length(sequence<string> strings, u32 min_length);
+
+    // ── Large payloads ──
+    string generate_large_string(u32 size_kb);
+    [Async]
+    string async_generate_large_string(u32 size_kb);
+
+    // ── HashMap / key-value ──
+    record<string, string> create_metadata(sequence<string> keys, sequence<string> values);
+    record<string, string> merge_metadata(record<string, string> base, record<string, string> overrides);
+    string? get_metadata_value(record<string, string> metadata, string key);
+
+    // ── Nullable returns ──
+    UserProfile? find_user_by_name(string name);
+    [Async]
+    UserProfile? async_find_user_by_name(string name, u64 delay_ms);
+
+    // ── Nested objects ──
+    ContactInfo create_contact_info(
+        string name,
+        string email,
+        string? phone,
+        Address? address,
+        sequence<string> tags,
+        record<string, string> metadata
+    );
+    Address? get_contact_address(ContactInfo contact);
+
+    // ── Float precision ──
+    f64 float_multiply(f64 a, f64 b);
+    f64? float_divide_safe(f64 a, f64 b);
+};
+
+// ── Enums ──
+
+enum SortField {
+    "Username",
+    "Email",
+    "Age",
+    "FollowerCount",
+    "CreatedAt",
+};
+
+enum SortOrder {
+    "Ascending",
+    "Descending",
+};
+
+[Error]
+interface RustFfiError {
+    InvalidInput(string message);
+    Timeout(u64 duration_ms);
+    NotFound(string item);
+    InternalError(string message);
+};
+
+[Enum]
+interface AppEvent {
+    Started();
+    Progress(f64 percent, string description);
+    DataReceived(string payload);
+    Completed(string result);
+    Error(u32 code, string message);
+};
+
+// ── Records (dictionaries) ──
+
+dictionary UserProfile {
+    string username;
+    string email;
+    string? display_name;
+    string? bio;
+    u32? age;
+    string? avatar_url;
+    string? website;
+    string? location;
+    boolean is_verified;
+    u64 follower_count;
+};
+
+dictionary SearchOptions {
+    string query;
+    u32? page;
+    u32? per_page;
+    SortField? sort_by;
+    SortOrder? sort_order;
+    boolean? filter_verified;
+    u32? min_age;
+    u32? max_age;
+    string? location;
+    boolean? include_inactive;
+};
+
+dictionary SearchResult {
+    sequence<UserProfile> users;
+    u64 total_count;
+    u32 page;
+    u32 per_page;
+    boolean has_next_page;
+};
+
+dictionary FakeApiResponse {
+    u64 id;
+    string title;
+    string body;
+    sequence<string> tags;
+};
+
+dictionary TimedResult {
+    string result;
+    u64 elapsed_ms;
+};
+
+dictionary Address {
+    string street;
+    string city;
+    string? state;
+    string zip;
+    string country;
+};
+
+dictionary ContactInfo {
+    string name;
+    string email;
+    string? phone;
+    Address? address;
+    sequence<string> tags;
+    record<string, string> metadata;
+};
+
+// ── Callback interfaces ──
+
+callback interface ProgressCallback {
+    void on_progress(u64 current, u64 total, string message);
+    void on_complete(string result);
+    void on_error(string error);
+};
+
+callback interface EventListener {
+    void on_event(AppEvent event);
+};
+
+// ── Stateful object ──
+
+interface Counter {
+    constructor(i64 initial);
+    i64 increment();
+    i64 decrement();
+    i64 add(i64 amount);
+    i64 get();
+    i64 reset();
+};
