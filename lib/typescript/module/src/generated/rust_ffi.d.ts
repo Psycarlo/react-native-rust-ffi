@@ -56,6 +56,9 @@ export declare function mergeMetadata(base: Map<string, string>, overrides: Map<
 export declare function reverseString(input: string): string;
 export declare function searchUsers(options: SearchOptions): SearchResult;
 export declare function sortNumbers(numbers: Array</*i64*/ bigint>): Array</*i64*/ bigint>;
+export declare function subscribe(event: string, listener: EventListener, asyncOpts_?: {
+    signal: AbortSignal;
+}): Promise<SubscriptionInterface>;
 export declare function sumNumbers(numbers: Array</*i64*/ bigint>): bigint;
 export declare function timedCountPrimes(limit: bigint): TimedResult;
 export declare function timedFibonacci(n: number): TimedResult;
@@ -851,6 +854,23 @@ export declare class Counter extends UniffiAbstractObject implements CounterInte
     uniffiDestroy(): void;
     static instanceOf(obj: any): obj is Counter;
 }
+export interface SubscriptionInterface {
+    cancel(): void;
+    isActive(): boolean;
+}
+export declare class Subscription extends UniffiAbstractObject implements SubscriptionInterface {
+    readonly [uniffiTypeNameSymbol] = "Subscription";
+    readonly [destructorGuardSymbol]: UniffiGcObject;
+    readonly [pointerLiteralSymbol]: UniffiHandle;
+    private constructor();
+    cancel(): void;
+    isActive(): boolean;
+    /**
+     * {@inheritDoc uniffi-bindgen-react-native#UniffiAbstractObject.uniffiDestroy}
+     */
+    uniffiDestroy(): void;
+    static instanceOf(obj: any): obj is Subscription;
+}
 /**
  * This should be called before anything else.
  *
@@ -929,6 +949,7 @@ declare const _default: Readonly<{
             lift(value: UniffiByteArray): SortOrder;
             lower(value: SortOrder): UniffiByteArray;
         };
+        FfiConverterTypeSubscription: FfiConverterObject<SubscriptionInterface>;
         FfiConverterTypeTimedResult: {
             read(from: RustBuffer): TimedResult;
             write(value: TimedResult, into: RustBuffer): void;

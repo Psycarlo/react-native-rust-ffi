@@ -857,6 +857,39 @@ export function sortNumbers(
     )
   );
 }
+export async function subscribe(
+  event: string,
+  listener: EventListener,
+  asyncOpts_?: { signal: AbortSignal }
+): Promise<SubscriptionInterface> {
+  const __stack = uniffiIsDebug ? new Error().stack : undefined;
+  try {
+    return await uniffiRustCallAsync(
+      /*rustCaller:*/ uniffiCaller,
+      /*rustFutureFunc:*/ () => {
+        return nativeModule().ubrn_uniffi_rust_ffi_fn_func_subscribe(
+          FfiConverterString.lower(event),
+          FfiConverterTypeEventListener.lower(listener)
+        );
+      },
+      /*pollFunc:*/ nativeModule().ubrn_ffi_rust_ffi_rust_future_poll_u64,
+      /*cancelFunc:*/ nativeModule().ubrn_ffi_rust_ffi_rust_future_cancel_u64,
+      /*completeFunc:*/ nativeModule()
+        .ubrn_ffi_rust_ffi_rust_future_complete_u64,
+      /*freeFunc:*/ nativeModule().ubrn_ffi_rust_ffi_rust_future_free_u64,
+      /*liftFunc:*/ FfiConverterTypeSubscription.lift.bind(
+        FfiConverterTypeSubscription
+      ),
+      /*liftString:*/ FfiConverterString.lift,
+      /*asyncOpts:*/ asyncOpts_
+    );
+  } catch (__error: any) {
+    if (uniffiIsDebug && __error instanceof Error) {
+      __error.stack = __stack;
+    }
+    throw __error;
+  }
+}
 export function sumNumbers(numbers: Array</*i64*/ bigint>): /*i64*/ bigint {
   return FfiConverterInt64.lift(
     uniffiCaller.rustCall(
@@ -2387,6 +2420,139 @@ const FfiConverterTypeCounter = new FfiConverterObject(
   uniffiTypeCounterObjectFactory
 );
 
+export interface SubscriptionInterface {
+  cancel(): void;
+  isActive(): boolean;
+}
+
+export class Subscription
+  extends UniffiAbstractObject
+  implements SubscriptionInterface
+{
+  readonly [uniffiTypeNameSymbol] = "Subscription";
+  readonly [destructorGuardSymbol]: UniffiGcObject;
+  readonly [pointerLiteralSymbol]: UniffiHandle;
+  // No primary constructor declared for this class.
+  private constructor(pointer: UniffiHandle) {
+    super();
+    this[pointerLiteralSymbol] = pointer;
+    this[destructorGuardSymbol] =
+      uniffiTypeSubscriptionObjectFactory.bless(pointer);
+  }
+
+  cancel(): void {
+    uniffiCaller.rustCall(
+      /*caller:*/ (callStatus) => {
+        nativeModule().ubrn_uniffi_rust_ffi_fn_method_subscription_cancel(
+          uniffiTypeSubscriptionObjectFactory.clonePointer(this),
+          callStatus
+        );
+      },
+      /*liftString:*/ FfiConverterString.lift
+    );
+  }
+
+  isActive(): boolean {
+    return FfiConverterBool.lift(
+      uniffiCaller.rustCall(
+        /*caller:*/ (callStatus) => {
+          return nativeModule().ubrn_uniffi_rust_ffi_fn_method_subscription_is_active(
+            uniffiTypeSubscriptionObjectFactory.clonePointer(this),
+            callStatus
+          );
+        },
+        /*liftString:*/ FfiConverterString.lift
+      )
+    );
+  }
+
+  /**
+   * {@inheritDoc uniffi-bindgen-react-native#UniffiAbstractObject.uniffiDestroy}
+   */
+  uniffiDestroy(): void {
+    const ptr = (this as any)[destructorGuardSymbol];
+    if (ptr !== undefined) {
+      const pointer = uniffiTypeSubscriptionObjectFactory.pointer(this);
+      uniffiTypeSubscriptionObjectFactory.freePointer(pointer);
+      uniffiTypeSubscriptionObjectFactory.unbless(ptr);
+      delete (this as any)[destructorGuardSymbol];
+    }
+  }
+
+  static instanceOf(obj: any): obj is Subscription {
+    return uniffiTypeSubscriptionObjectFactory.isConcreteType(obj);
+  }
+}
+
+const uniffiTypeSubscriptionObjectFactory: UniffiObjectFactory<SubscriptionInterface> =
+  (() => {
+    return {
+      create(pointer: UniffiHandle): SubscriptionInterface {
+        const instance = Object.create(Subscription.prototype);
+        instance[pointerLiteralSymbol] = pointer;
+        instance[destructorGuardSymbol] = this.bless(pointer);
+        instance[uniffiTypeNameSymbol] = "Subscription";
+        return instance;
+      },
+
+      bless(p: UniffiHandle): UniffiGcObject {
+        return uniffiCaller.rustCall(
+          /*caller:*/ (status) =>
+            nativeModule().ubrn_uniffi_internal_fn_method_subscription_ffi__bless_pointer(
+              p,
+              status
+            ),
+          /*liftString:*/ FfiConverterString.lift
+        );
+      },
+
+      unbless(ptr: UniffiGcObject) {
+        ptr.markDestroyed();
+      },
+
+      pointer(obj: SubscriptionInterface): UniffiHandle {
+        if ((obj as any)[destructorGuardSymbol] === undefined) {
+          throw new UniffiInternalError.UnexpectedNullPointer();
+        }
+        return (obj as any)[pointerLiteralSymbol];
+      },
+
+      clonePointer(obj: SubscriptionInterface): UniffiHandle {
+        const pointer = this.pointer(obj);
+        return uniffiCaller.rustCall(
+          /*caller:*/ (callStatus) =>
+            nativeModule().ubrn_uniffi_rust_ffi_fn_clone_subscription(
+              pointer,
+              callStatus
+            ),
+          /*liftString:*/ FfiConverterString.lift
+        );
+      },
+
+      freePointer(pointer: UniffiHandle): void {
+        uniffiCaller.rustCall(
+          /*caller:*/ (callStatus) =>
+            nativeModule().ubrn_uniffi_rust_ffi_fn_free_subscription(
+              pointer,
+              callStatus
+            ),
+          /*liftString:*/ FfiConverterString.lift
+        );
+      },
+
+      isConcreteType(obj: any): obj is SubscriptionInterface {
+        return (
+          obj[destructorGuardSymbol] &&
+          obj[uniffiTypeNameSymbol] === "Subscription"
+        );
+      },
+    };
+  })();
+// FfiConverter for SubscriptionInterface
+const FfiConverterTypeSubscription = new FfiConverterObject(
+  uniffiTypeSubscriptionObjectFactory
+);
+
 // FfiConverter for boolean | undefined
 const FfiConverterOptionalBool = new FfiConverterOptional(FfiConverterBool);
 
@@ -2727,6 +2893,11 @@ function uniffiEnsureInitialized() {
       "uniffi_rust_ffi_checksum_func_sort_numbers"
     );
   }
+  if (nativeModule().ubrn_uniffi_rust_ffi_checksum_func_subscribe() !== 47106) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      "uniffi_rust_ffi_checksum_func_subscribe"
+    );
+  }
   if (
     nativeModule().ubrn_uniffi_rust_ffi_checksum_func_sum_numbers() !== 55392
   ) {
@@ -2789,6 +2960,22 @@ function uniffiEnsureInitialized() {
     );
   }
   if (
+    nativeModule().ubrn_uniffi_rust_ffi_checksum_method_subscription_cancel() !==
+    39692
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      "uniffi_rust_ffi_checksum_method_subscription_cancel"
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_rust_ffi_checksum_method_subscription_is_active() !==
+    59177
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      "uniffi_rust_ffi_checksum_method_subscription_is_active"
+    );
+  }
+  if (
     nativeModule().ubrn_uniffi_rust_ffi_checksum_constructor_counter_new() !==
     45422
   ) {
@@ -2846,6 +3033,7 @@ export default Object.freeze({
     FfiConverterTypeSearchResult,
     FfiConverterTypeSortField,
     FfiConverterTypeSortOrder,
+    FfiConverterTypeSubscription,
     FfiConverterTypeTimedResult,
     FfiConverterTypeUserProfile,
   },

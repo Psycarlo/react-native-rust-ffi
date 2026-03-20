@@ -11,6 +11,10 @@ interface NativeModuleInterface {
     ubrn_uniffi_rust_ffi_fn_method_counter_get(ptr: bigint, uniffi_out_err: UniffiRustCallStatus): bigint;
     ubrn_uniffi_rust_ffi_fn_method_counter_increment(ptr: bigint, uniffi_out_err: UniffiRustCallStatus): bigint;
     ubrn_uniffi_rust_ffi_fn_method_counter_reset(ptr: bigint, uniffi_out_err: UniffiRustCallStatus): bigint;
+    ubrn_uniffi_rust_ffi_fn_clone_subscription(handle: bigint, uniffi_out_err: UniffiRustCallStatus): bigint;
+    ubrn_uniffi_rust_ffi_fn_free_subscription(handle: bigint, uniffi_out_err: UniffiRustCallStatus): void;
+    ubrn_uniffi_rust_ffi_fn_method_subscription_cancel(ptr: bigint, uniffi_out_err: UniffiRustCallStatus): void;
+    ubrn_uniffi_rust_ffi_fn_method_subscription_is_active(ptr: bigint, uniffi_out_err: UniffiRustCallStatus): number;
     ubrn_uniffi_rust_ffi_fn_init_callback_vtable_eventlistener(vtable: UniffiVTableCallbackInterfaceEventListener): void;
     ubrn_uniffi_rust_ffi_fn_init_callback_vtable_progresscallback(vtable: UniffiVTableCallbackInterfaceProgressCallback): void;
     ubrn_uniffi_rust_ffi_fn_func_add(a: bigint, b: bigint, uniffi_out_err: UniffiRustCallStatus): bigint;
@@ -50,6 +54,7 @@ interface NativeModuleInterface {
     ubrn_uniffi_rust_ffi_fn_func_reverse_string(input: Uint8Array, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
     ubrn_uniffi_rust_ffi_fn_func_search_users(options: Uint8Array, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
     ubrn_uniffi_rust_ffi_fn_func_sort_numbers(numbers: Uint8Array, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
+    ubrn_uniffi_rust_ffi_fn_func_subscribe(event: Uint8Array, listener: bigint): bigint;
     ubrn_uniffi_rust_ffi_fn_func_sum_numbers(numbers: Uint8Array, uniffi_out_err: UniffiRustCallStatus): bigint;
     ubrn_uniffi_rust_ffi_fn_func_timed_count_primes(limit: bigint, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
     ubrn_uniffi_rust_ffi_fn_func_timed_fibonacci(n: number, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
@@ -138,6 +143,7 @@ interface NativeModuleInterface {
     ubrn_uniffi_rust_ffi_checksum_func_reverse_string(): number;
     ubrn_uniffi_rust_ffi_checksum_func_search_users(): number;
     ubrn_uniffi_rust_ffi_checksum_func_sort_numbers(): number;
+    ubrn_uniffi_rust_ffi_checksum_func_subscribe(): number;
     ubrn_uniffi_rust_ffi_checksum_func_sum_numbers(): number;
     ubrn_uniffi_rust_ffi_checksum_func_timed_count_primes(): number;
     ubrn_uniffi_rust_ffi_checksum_func_timed_fibonacci(): number;
@@ -146,6 +152,8 @@ interface NativeModuleInterface {
     ubrn_uniffi_rust_ffi_checksum_method_counter_get(): number;
     ubrn_uniffi_rust_ffi_checksum_method_counter_increment(): number;
     ubrn_uniffi_rust_ffi_checksum_method_counter_reset(): number;
+    ubrn_uniffi_rust_ffi_checksum_method_subscription_cancel(): number;
+    ubrn_uniffi_rust_ffi_checksum_method_subscription_is_active(): number;
     ubrn_uniffi_rust_ffi_checksum_constructor_counter_new(): number;
     ubrn_uniffi_rust_ffi_checksum_method_eventlistener_on_event(): number;
     ubrn_uniffi_rust_ffi_checksum_method_progresscallback_on_progress(): number;
@@ -153,6 +161,7 @@ interface NativeModuleInterface {
     ubrn_uniffi_rust_ffi_checksum_method_progresscallback_on_error(): number;
     ubrn_ffi_rust_ffi_uniffi_contract_version(): number;
     ubrn_uniffi_internal_fn_method_counter_ffi__bless_pointer(pointer: bigint, uniffi_out_err: UniffiRustCallStatus): UniffiGcObject;
+    ubrn_uniffi_internal_fn_method_subscription_ffi__bless_pointer(pointer: bigint, uniffi_out_err: UniffiRustCallStatus): UniffiGcObject;
 }
 declare const getter: () => NativeModuleInterface;
 export default getter;

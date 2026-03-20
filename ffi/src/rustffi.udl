@@ -107,6 +107,10 @@ namespace rust_ffi {
     // ── Float precision ──
     f64 float_multiply(f64 a, f64 b);
     f64? float_divide_safe(f64 a, f64 b);
+
+    // ── Subscribe / Unsubscribe ──
+    [Async]
+    Subscription subscribe(string event, EventListener listener);
 };
 
 // ── Enums ──
@@ -227,4 +231,9 @@ interface Counter {
     i64 add(i64 amount);
     i64 get();
     i64 reset();
+};
+
+interface Subscription {
+    void cancel();
+    boolean is_active();
 };

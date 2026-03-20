@@ -53,6 +53,7 @@ import {
   floatMultiply,
   floatDivideSafe,
   Counter,
+  subscribe,
 } from 'react-native-rust-ffi';
 
 // ─── Types ───
@@ -586,6 +587,61 @@ function getTests(): TestDefinition[] {
       },
     },
 
+    // Subscribe / Unsubscribe
+    {
+      id: 'subscribe_tick',
+      name: 'subscribe("tick") → 3 events → cancel',
+      category: 'Subscribe',
+      run: async () => {
+        const events: string[] = [];
+        const sub = await subscribe('tick', {
+          onEvent: (e: any) => {
+            if ('Progress' in e) {
+              events.push(`tick:${e.Progress.description}`);
+            } else {
+              events.push(JSON.stringify(e));
+            }
+          },
+        });
+        // Wait for 3 events (interval is 1s each)
+        await new Promise((r) => setTimeout(r, 3200));
+        sub.cancel();
+        return `active=${sub.isActive()} events=[${events.join(', ')}]`;
+      },
+    },
+    {
+      id: 'subscribe_data',
+      name: 'subscribe("data") → cancel after 2s',
+      category: 'Subscribe',
+      run: async () => {
+        const events: string[] = [];
+        const sub = await subscribe('data', {
+          onEvent: (e: any) => {
+            if ('DataReceived' in e) {
+              events.push(e.DataReceived.payload);
+            }
+          },
+        });
+        await new Promise((r) => setTimeout(r, 2200));
+        sub.cancel();
+        return `${events.length} events, cancelled=${!sub.isActive()}`;
+      },
+    },
+    {
+      id: 'subscribe_immediate_cancel',
+      name: 'subscribe → immediate cancel',
+      category: 'Subscribe',
+      run: async () => {
+        const events: string[] = [];
+        const sub = await subscribe('tick', {
+          onEvent: () => events.push('got'),
+        });
+        sub.cancel();
+        await new Promise((r) => setTimeout(r, 1500));
+        return `events=${events.length} (expect 0), active=${sub.isActive()}`;
+      },
+    },
+
     // Benchmarks
     {
       id: 'bench_fib',
@@ -627,6 +683,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   'Nested Objects': '#0EA5E9',
   'Float Precision': '#D946EF',
   'Stateful Object': '#F43F5E',
+  Subscribe: '#22D3EE',
   Benchmarks: '#EAB308',
 };
 

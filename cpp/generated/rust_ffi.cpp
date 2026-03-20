@@ -198,6 +198,22 @@ extern "C" {
         /*handle*/ uint64_t ptr, 
         RustCallStatus *uniffi_out_err
     );
+    /*handle*/ uint64_t uniffi_rust_ffi_fn_clone_subscription(
+        /*handle*/ uint64_t handle, 
+        RustCallStatus *uniffi_out_err
+    );
+    void uniffi_rust_ffi_fn_free_subscription(
+        /*handle*/ uint64_t handle, 
+        RustCallStatus *uniffi_out_err
+    );
+    void uniffi_rust_ffi_fn_method_subscription_cancel(
+        /*handle*/ uint64_t ptr, 
+        RustCallStatus *uniffi_out_err
+    );
+    int8_t uniffi_rust_ffi_fn_method_subscription_is_active(
+        /*handle*/ uint64_t ptr, 
+        RustCallStatus *uniffi_out_err
+    );
     void uniffi_rust_ffi_fn_init_callback_vtable_eventlistener(
         UniffiVTableCallbackInterfaceEventListener * vtable
     );
@@ -374,6 +390,10 @@ extern "C" {
     RustBuffer uniffi_rust_ffi_fn_func_sort_numbers(
         RustBuffer numbers, 
         RustCallStatus *uniffi_out_err
+    );
+    /*handle*/ uint64_t uniffi_rust_ffi_fn_func_subscribe(
+        RustBuffer event, 
+        uint64_t listener
     );
     int64_t uniffi_rust_ffi_fn_func_sum_numbers(
         RustBuffer numbers, 
@@ -658,6 +678,8 @@ extern "C" {
     );
     uint16_t uniffi_rust_ffi_checksum_func_sort_numbers(
     );
+    uint16_t uniffi_rust_ffi_checksum_func_subscribe(
+    );
     uint16_t uniffi_rust_ffi_checksum_func_sum_numbers(
     );
     uint16_t uniffi_rust_ffi_checksum_func_timed_count_primes(
@@ -673,6 +695,10 @@ extern "C" {
     uint16_t uniffi_rust_ffi_checksum_method_counter_increment(
     );
     uint16_t uniffi_rust_ffi_checksum_method_counter_reset(
+    );
+    uint16_t uniffi_rust_ffi_checksum_method_subscription_cancel(
+    );
+    uint16_t uniffi_rust_ffi_checksum_method_subscription_is_active(
     );
     uint16_t uniffi_rust_ffi_checksum_constructor_counter_new(
     );
@@ -3274,6 +3300,38 @@ NativeRustFfi::NativeRustFfi(
             return this->cpp_uniffi_rust_ffi_fn_method_counter_reset(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_rust_ffi_fn_clone_subscription"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_fn_clone_subscription"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_rust_ffi_fn_clone_subscription(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_rust_ffi_fn_free_subscription"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_fn_free_subscription"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_rust_ffi_fn_free_subscription(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_rust_ffi_fn_method_subscription_cancel"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_fn_method_subscription_cancel"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_rust_ffi_fn_method_subscription_cancel(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_rust_ffi_fn_method_subscription_is_active"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_fn_method_subscription_is_active"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_rust_ffi_fn_method_subscription_is_active(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_rust_ffi_fn_init_callback_vtable_eventlistener"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_fn_init_callback_vtable_eventlistener"),
@@ -3584,6 +3642,14 @@ NativeRustFfi::NativeRustFfi(
         1,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_rust_ffi_fn_func_sort_numbers(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_rust_ffi_fn_func_subscribe"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_fn_func_subscribe"),
+        2,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_rust_ffi_fn_func_subscribe(rt, thisVal, args, count);
         }
     );
     props["ubrn_uniffi_rust_ffi_fn_func_sum_numbers"] = jsi::Function::createFromHostFunction(
@@ -4290,6 +4356,14 @@ NativeRustFfi::NativeRustFfi(
             return this->cpp_uniffi_rust_ffi_checksum_func_sort_numbers(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_rust_ffi_checksum_func_subscribe"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_checksum_func_subscribe"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_rust_ffi_checksum_func_subscribe(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_rust_ffi_checksum_func_sum_numbers"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_checksum_func_sum_numbers"),
@@ -4354,6 +4428,22 @@ NativeRustFfi::NativeRustFfi(
             return this->cpp_uniffi_rust_ffi_checksum_method_counter_reset(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_rust_ffi_checksum_method_subscription_cancel"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_checksum_method_subscription_cancel"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_rust_ffi_checksum_method_subscription_cancel(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_rust_ffi_checksum_method_subscription_is_active"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_checksum_method_subscription_is_active"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_rust_ffi_checksum_method_subscription_is_active(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_rust_ffi_checksum_constructor_counter_new"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_rust_ffi_checksum_constructor_counter_new"),
@@ -4408,6 +4498,14 @@ NativeRustFfi::NativeRustFfi(
         1,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_internal_fn_method_counter_ffi__bless_pointer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_internal_fn_method_subscription_ffi__bless_pointer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_internal_fn_method_subscription_ffi__bless_pointer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_internal_fn_method_subscription_ffi__bless_pointer(rt, thisVal, args, count);
         }
     );
 }
@@ -4475,6 +4573,15 @@ jsi::Value NativeRustFfi::cpp_uniffi_internal_fn_func_ffi__arraybuffer_to_string
     auto static destructor = [](uint64_t p) {
         RustCallStatus status = {0};
         uniffi_rust_ffi_fn_free_counter(p, &status);
+    };
+    auto ptrObj = std::make_shared<uniffi_jsi::DestructibleObject>(pointer, destructor);
+    auto obj = jsi::Object::createFromHostObject(rt, ptrObj);
+    return jsi::Value(rt, obj);
+}jsi::Value NativeRustFfi::cpp_uniffi_internal_fn_method_subscription_ffi__bless_pointer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+    auto pointer = uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]);
+    auto static destructor = [](uint64_t p) {
+        RustCallStatus status = {0};
+        uniffi_rust_ffi_fn_free_subscription(p, &status);
     };
     auto ptrObj = std::make_shared<uniffi_jsi::DestructibleObject>(pointer, destructor);
     auto obj = jsi::Object::createFromHostObject(rt, ptrObj);
@@ -4561,6 +4668,46 @@ jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_fn_method_counter_reset(jsi::Runti
 
         
         return uniffi_jsi::Bridging<int64_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_fn_clone_subscription(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::rust_ffi::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_rust_ffi_fn_clone_subscription(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::rust_ffi::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging</*handle*/ uint64_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_fn_free_subscription(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::rust_ffi::Bridging<RustCallStatus>::rustSuccess(rt);
+        uniffi_rust_ffi_fn_free_subscription(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::rust_ffi::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_fn_method_subscription_cancel(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::rust_ffi::Bridging<RustCallStatus>::rustSuccess(rt);
+        uniffi_rust_ffi_fn_method_subscription_cancel(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::rust_ffi::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_fn_method_subscription_is_active(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::rust_ffi::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_rust_ffi_fn_method_subscription_is_active(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::rust_ffi::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int8_t>::toJs(rt, callInvoker, value);
 }
 jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_fn_init_callback_vtable_eventlistener(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
     auto vtableInstance =
@@ -4935,6 +5082,13 @@ jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_fn_func_sort_numbers(jsi::Runtime&
 
         
         return uniffi::rust_ffi::Bridging<RustBuffer>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_fn_func_subscribe(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_rust_ffi_fn_func_subscribe(uniffi::rust_ffi::Bridging<RustBuffer>::fromJs(rt, callInvoker, args[0]), uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[1])
+        );
+
+        
+        return uniffi_jsi::Bridging</*handle*/ uint64_t>::toJs(rt, callInvoker, value);
 }
 jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_fn_func_sum_numbers(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         RustCallStatus status = uniffi::rust_ffi::Bridging<RustCallStatus>::rustSuccess(rt);
@@ -5597,6 +5751,13 @@ jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_checksum_func_sort_numbers(jsi::Ru
         
         return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
 }
+jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_checksum_func_subscribe(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_rust_ffi_checksum_func_subscribe(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
 jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_checksum_func_sum_numbers(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         auto value = uniffi_rust_ffi_checksum_func_sum_numbers(
         );
@@ -5648,6 +5809,20 @@ jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_checksum_method_counter_increment(
 }
 jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_checksum_method_counter_reset(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         auto value = uniffi_rust_ffi_checksum_method_counter_reset(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_checksum_method_subscription_cancel(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_rust_ffi_checksum_method_subscription_cancel(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeRustFfi::cpp_uniffi_rust_ffi_checksum_method_subscription_is_active(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_rust_ffi_checksum_method_subscription_is_active(
         );
 
         

@@ -1,3 +1,6 @@
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
+
 use once_cell::sync::Lazy;
 use tokio::runtime::Runtime;
 
@@ -623,6 +626,57 @@ async fn async_process_with_validation(
         .map_err(|e| RustFfiError::InternalError {
             message: e.to_string(),
         })
+}
+
+// ---------------------------------------------------------------------------
+// Subscribe / Unsubscribe pattern
+// ---------------------------------------------------------------------------
+
+pub struct Subscription {
+    cancelled: AtomicBool,
+}
+
+impl Subscription {
+    fn cancel(&self) {
+        self.cancelled.store(true, Ordering::Relaxed);
+    }
+
+    fn is_active(&self) -> bool {
+        !self.cancelled.load(Ordering::Relaxed)
+    }
+}
+
+async fn subscribe(event: String, listener: Box<dyn EventListener>) -> Arc<Subscription> {
+    let sub = Arc::new(Subscription {
+        cancelled: AtomicBool::new(false),
+    });
+    let sub_clone = sub.clone();
+
+    RUNTIME.spawn(async move {
+        let mut tick: u64 = 0;
+        while !sub_clone.cancelled.load(Ordering::Relaxed) {
+            tokio::time::sleep(std::time::Duration::from_millis(1000)).await;
+            if sub_clone.cancelled.load(Ordering::Relaxed) {
+                break;
+            }
+            tick += 1;
+            let evt = match event.as_str() {
+                "tick" => AppEvent::Progress {
+                    percent: (tick % 100) as f64,
+                    description: format!("Tick #{}", tick),
+                },
+                "data" => AppEvent::DataReceived {
+                    payload: format!("{{\"tick\":{},\"event\":\"{}\"}}", tick, event),
+                },
+                _ => AppEvent::DataReceived {
+                    payload: format!("Event '{}' tick #{}", event, tick),
+                },
+            };
+            listener.on_event(evt);
+        }
+    });
+
+    sub
 }
 
 uniffi::include_scaffolding!("rustffi");

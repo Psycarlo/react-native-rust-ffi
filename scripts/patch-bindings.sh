@@ -63,8 +63,7 @@ if [ -f "$CMAKE_FILE" ]; then
     echo "  Patching CMakeLists.txt (Windows path compatibility)..."
     # Fix include_directories and add_library source paths
     sed -i.bak \
-      -e 's|\.\./cpp/generated|\${CMAKE_CURRENT_SOURCE_DIR}/../cpp/generated|g' \
-      -e 's|\.\./cpp|\${CMAKE_CURRENT_SOURCE_DIR}/../cpp|g' \
+      's|\.\./cpp|\${CMAKE_CURRENT_SOURCE_DIR}/../cpp|g' \
       "$CMAKE_FILE"
     # Fix jniLibs path (src\main\jniLibs -> src/main/jniLibs)
     sed -i.bak 's|src\\main\\jniLibs|src/main/jniLibs|g' "$CMAKE_FILE"
