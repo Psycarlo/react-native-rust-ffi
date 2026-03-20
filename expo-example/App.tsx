@@ -4,12 +4,12 @@ import {
   ActivityIndicator,
   Animated,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 
 import {
   add,
@@ -695,9 +695,11 @@ export default function App() {
   const errorCount = Object.values(results).filter(
     (r) => r.status === 'error'
   ).length;
+  const ran = Object.keys(results).length;
   const total = tests.length;
 
   return (
+    <SafeAreaProvider>
     <SafeAreaView style={styles.safe}>
       <StatusBar style="light" />
 
@@ -723,12 +725,12 @@ export default function App() {
           <View style={styles.stats}>
             <Text style={styles.statText}>
               {successCount > 0 && (
-                <Text style={{ color: '#10B981' }}>{successCount} ✓ </Text>
+                <Text style={{ color: '#10B981' }}>{successCount} ✓  </Text>
               )}
               {errorCount > 0 && (
-                <Text style={{ color: '#EF4444' }}>{errorCount} ✗ </Text>
+                <Text style={{ color: '#EF4444' }}>{errorCount} ✗  </Text>
               )}
-              <Text style={{ color: '#64748B' }}>/ {total}</Text>
+              <Text style={{ color: '#64748B' }}>({ran}/{total})</Text>
             </Text>
           </View>
         </View>
@@ -797,6 +799,7 @@ export default function App() {
         <View style={{ height: 60 }} />
       </ScrollView>
     </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
