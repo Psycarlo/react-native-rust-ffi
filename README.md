@@ -5,18 +5,29 @@
 - [rust toolchain](https://rust-lang.org/tools/install/)
 - [node](https://nodejs.org/en)
 - [pnpm](https://pnpm.io/installation)
+- [just](https://github.com/casey/just) (optional)
 
 ### Setup environment
 
 Follow [this expo guide](https://docs.expo.dev/get-started/set-up-your-environment/?platform=ios&device=simulated&mode=development-build).
 
-### Install
+### Setup
 
 1. Install dependencies
 
 ```bash
-pnpm install
+pnpm install --ignore-scripts
 ```
+
+2. Generate bindings
+
+```bash
+just generate
+# or
+bash generate.sh
+```
+
+Note: To generate bindings for iOS, you need to be on macOS.
 
 ### Run
 

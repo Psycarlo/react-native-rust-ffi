@@ -50,4 +50,31 @@ else
   echo "  rust_ffi.cpp not found, skipping"
 fi
 
+# ----------------------------------------------------------------------------
+#    Fix CMakeLists.txt relative paths for Windows compatibility.
+#    uniffi-bindgen-react-native generates bare relative paths like ../cpp
+#    which Windows may convert to ..\cpp, causing CMake to choke on invalid
+#    escape sequences (\c, \g, etc.). Using ${CMAKE_CURRENT_SOURCE_DIR}
+#    ensures paths resolve correctly on all platforms.
+# ----------------------------------------------------------------------------
+CMAKE_FILE="$PROJECT_DIR/android/CMakeLists.txt"
+if [ -f "$CMAKE_FILE" ]; then
+  if grep -qE '^\s+\.\./cpp' "$CMAKE_FILE"; then
+    echo "  Patching CMakeLists.txt (Windows path compatibility)..."
+    # Fix include_directories and add_library source paths
+    sed -i.bak \
+      -e 's|\.\./cpp/generated|\${CMAKE_CURRENT_SOURCE_DIR}/../cpp/generated|g' \
+      -e 's|\.\./cpp|\${CMAKE_CURRENT_SOURCE_DIR}/../cpp|g' \
+      "$CMAKE_FILE"
+    # Fix jniLibs path (src\main\jniLibs -> src/main/jniLibs)
+    sed -i.bak 's|src\\main\\jniLibs|src/main/jniLibs|g' "$CMAKE_FILE"
+    rm -f "$CMAKE_FILE.bak"
+    echo "  CMakeLists.txt patched"
+  else
+    echo "  CMakeLists.txt already patched, skipping"
+  fi
+else
+  echo "  CMakeLists.txt not found, skipping"
+fi
+
 echo "Done."

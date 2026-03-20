@@ -17,15 +17,15 @@ get_filename_component(UNIFFI_BINDGEN_PATH "${UNIFFI_BINDGEN_PATH}" DIRECTORY)
 
 # Specifies a path to native header files.
 include_directories(
-    ../cpp
-    ../cpp/generated
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/generated
 
     ${UNIFFI_BINDGEN_PATH}/cpp/includes
 )
 
 add_library(react-native-rust-ffi            SHARED
-    ../cpp/react-native-rust-ffi.cpp
-    ../cpp/generated/rust_ffi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/react-native-rust-ffi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/generated/rust_ffi.cpp
     cpp-adapter.cpp
 )
 
